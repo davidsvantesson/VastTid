@@ -26,7 +26,8 @@
         "KEY_REQUEST_SETTINGS": 101
     },
     "capabilities": [
-        "location"
+        "location",
+        "configurable"
     ],
     "companyName": "David Svantesson",
     "longName": "VastTid",
