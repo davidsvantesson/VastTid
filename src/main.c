@@ -16,7 +16,7 @@ void process_tuple(Tuple *t)
   uint32_t value = t->value->uint32;
   char string_value[32];
   strcpy(string_value, t->value->cstring);
-  
+
   if (key<10) departureboard_process_message(&key,&value,string_value);
   else if (key<20) favorites_process_message(&key,&value,string_value);
   else if (key<30) nearby_process_message(&key, &value, string_value);
@@ -59,7 +59,7 @@ static void out_failed_handler(DictionaryIterator *iter,AppMessageResult reason,
 }
 
 void load_settings() {
-  
+
   if (!check_stored_version()) {
     storageTimestamp = 0;
     // Favorites / settings only cached for the same version
@@ -77,10 +77,10 @@ void load_settings() {
 
 void init()
 {
-  
+
   stopBoard_init();
   departueboard_init();
-  
+
 	//Register AppMessage events
 	app_message_register_inbox_received(in_received_handler);
   app_message_register_inbox_dropped(in_dropped_handler);
@@ -89,8 +89,8 @@ void init()
 	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());   //Large input and output buffer sizes
 
   load_settings();
-  
-  stopBoard_setActive();  
+
+  stopBoard_setActive();
 
 }
 

@@ -34,7 +34,7 @@ var MessageQueue = (function () {
     setTimeout(function () {
       sendNextMessage();
     }, 1);
-    
+
     return true;
   }
 

@@ -3,7 +3,7 @@
 #include "utils.h"
 
 #define MAX_DEPARTURE_LINES 30
-    
+
 Window *departureBoardWindow;
 MenuLayer *departureBoardLayer;
 
@@ -49,7 +49,7 @@ void departureboard_update(struct tm *tick_time, TimeUnits units_changed);
 #define MinutesLeftSizeH 20
 GRect RouteNrFill;
 GRect RouteNrText;
-GRect DirectionText; 
+GRect DirectionText;
 GRect MinutesLeftText;
 
 void departueboard_init()
@@ -57,24 +57,24 @@ void departueboard_init()
   RouteNrFill = GRect(RouteNrPosX, RouteNrPosY, RouteNrSizeW, RouteNrSizeH);
   RouteNrText = GRect(RouteNrPosX,RouteNrPosY-3,RouteNrSizeW,RouteNrSizeH);
   DirectionText = GRect(DirectionPosX,DirectionPosY,DirectionSizeW,DirectionSizeH);
-  MinutesLeftText = GRect(MinutesLeftPosX,MinutesLeftPosY,MinutesLeftSizeW,MinutesLeftSizeH);  
-  
+  MinutesLeftText = GRect(MinutesLeftPosX,MinutesLeftPosY,MinutesLeftSizeW,MinutesLeftSizeH);
+
   departureBoardWindow = window_create();
   window_set_window_handlers(departureBoardWindow, (WindowHandlers) {
     .load = departureBoardWindow_load,
     .unload = departureBoardWindow_unload
   });
-  
+
 }
 
 void departureboard_deinit()
 {
-  window_destroy(departureBoardWindow);  
+  window_destroy(departureBoardWindow);
 }
 
 void departureboard_process_message(int *key, uint32_t *value, char *string_value) {
-  static int departure_i = 0; 
-  
+  static int departure_i = 0;
+
   if (window_is_loaded(departureBoardWindow)) {
     switch(*key) {
       case KEY_DEPARTUREBOARD_STATUS:
@@ -84,18 +84,18 @@ void departureboard_process_message(int *key, uint32_t *value, char *string_valu
             APP_LOG(APP_LOG_LEVEL_DEBUG,"No departures");
           case DEPARTUREBOARD_STATUS_NO_RESPONSE:
             nrDepartures = 0;
-            
+
           if (window_is_loaded(departureBoardWindow)) {
               menu_layer_reload_data(departureBoardLayer);
           }
           break;
         }
         break;
-      
+
       case KEY_DEPARTUREBOARD_NAME:
         departure_i = -1;
         strcpy(departureBoardTitle,string_value);
-        break; 
+        break;
 
      case KEY_DEPARTUREBOARD_ROUTENR:
         if (departure_i<MAX_DEPARTURE_LINES-1) departure_i++;
@@ -105,7 +105,7 @@ void departureboard_process_message(int *key, uint32_t *value, char *string_valu
         strcpy(minutesLeft[departure_i],string_value);
         break;
       case KEY_DEPARTUREBOARD_DIRECTION:
-        strcpy(direction[departure_i],string_value);      
+        strcpy(direction[departure_i],string_value);
         break;
       case KEY_DEPARTUREBOARD_FGCOLOR:
         fgColor[departure_i] = *value;
@@ -125,7 +125,7 @@ void departureboard_process_message(int *key, uint32_t *value, char *string_valu
         }
         break;
     }
-  } 
+  }
 }
 
 uint16_t departureBoard_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
@@ -157,11 +157,11 @@ void departureBoard_draw_row_callback(GContext* ctx, const Layer *cell_layer, Me
       graphics_fill_rect(ctx,RouteNrFill,4,GCornersAll);
       graphics_context_set_text_color(ctx,(GColor) bgColor[cell_index->row -1]);
       graphics_draw_text(ctx,routeNr[cell_index->row -1],fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),RouteNrText,GTextOverflowModeWordWrap,GTextAlignmentCenter,NULL);
-      
+
       graphics_context_set_text_color(ctx,GColorBlack);
       graphics_draw_text(ctx,direction[cell_index->row -1],fonts_get_system_font(FONT_KEY_GOTHIC_18),DirectionText,GTextOverflowModeWordWrap,GTextAlignmentLeft,NULL);
-      graphics_draw_text(ctx,minutesLeft[cell_index->row -1],fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),MinutesLeftText,GTextOverflowModeWordWrap,GTextAlignmentRight,NULL );      
-    
+      graphics_draw_text(ctx,minutesLeft[cell_index->row -1],fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),MinutesLeftText,GTextOverflowModeWordWrap,GTextAlignmentRight,NULL );
+
   }
   else if (cell_index->row == 0) {
     switch(departureBoard_status) {
@@ -176,13 +176,13 @@ void departureBoard_draw_row_callback(GContext* ctx, const Layer *cell_layer, Me
         break;
       case DEPARTUREBOARD_STATUS_NO_RESPONSE:
         menu_cell_basic_draw(ctx, cell_layer, DEPARTUREBOARD_NO_RESPONSE_HEAD, DEPARTUREBOARD_NO_RESPONSE_SUB, NULL);
-        break;     
+        break;
     }
 
-    
+
   }
-  
-  
+
+
 
 }
 
@@ -194,7 +194,7 @@ void departureBoard_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index
     menu_layer_reload_data(departureBoardLayer);
   }
 }
-  
+
 
 void departureBoardWindow_load(Window *window)
 {
@@ -202,7 +202,7 @@ void departureBoardWindow_load(Window *window)
 
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
-  
+
   departureBoardLayer = menu_layer_create(bounds);
   menu_layer_set_callbacks(departureBoardLayer, NULL, (MenuLayerCallbacks){
     .get_num_sections = departureBoard_get_num_sections_callback,
@@ -213,7 +213,7 @@ void departureBoardWindow_load(Window *window)
     .draw_row = departureBoard_draw_row_callback,
     .select_click = departureBoard_select_callback,
   });
-  
+
   // Bind the menu layer's click config provider to the window for interactivity
   menu_layer_set_click_config_onto_window(departureBoardLayer, window);
 #ifdef PBL_COLOR
@@ -221,9 +221,9 @@ void departureBoardWindow_load(Window *window)
   menu_layer_set_highlight_colors(departureBoardLayer,GColorElectricBlue,GColorBlack);
 #endif
 
-  
-  layer_add_child(window_layer, menu_layer_get_layer(departureBoardLayer));  
-      
+
+  layer_add_child(window_layer, menu_layer_get_layer(departureBoardLayer));
+
   tick_timer_service_subscribe(MINUTE_UNIT, departureboard_update);
 }
 
@@ -240,7 +240,7 @@ void departureboard_update(struct tm *tick_time, TimeUnits units_changed)
     APP_LOG(APP_LOG_LEVEL_DEBUG,"Send request for favorite %i",selectedFavorite);
     send_int(KEY_REQUEST_FAVORITE_DEPARTUREBOARD, selectedFavorite);
     break;
-    
+
     case DEPARTUREBOARD_SELECTION_STOPID:
     APP_LOG(APP_LOG_LEVEL_DEBUG,"Send request for nearby, stop id %s", selectedStopId);
     send_str(KEY_REQUEST_NEARBY_DEPARTUREBOARD,selectedStopId);
@@ -255,7 +255,7 @@ void departueboard_activate_favorite(uint8_t favoriteId, char * title) {
       selectedFavorite = favoriteId;
       window_stack_push(departureBoardWindow, true);
       APP_LOG(APP_LOG_LEVEL_DEBUG,"Initiated and sending request for favorite %i",selectedFavorite);
-      send_int(KEY_REQUEST_FAVORITE_DEPARTUREBOARD, selectedFavorite);   
+      send_int(KEY_REQUEST_FAVORITE_DEPARTUREBOARD, selectedFavorite);
 }
 
 void departueboard_activate_stopId(char *stopId, char * title) {
@@ -265,5 +265,5 @@ void departueboard_activate_stopId(char *stopId, char * title) {
       strcpy(selectedStopId,stopId);
       window_stack_push(departureBoardWindow, true);
       APP_LOG(APP_LOG_LEVEL_DEBUG,"Initiated and sending request for nearby, stop id %s", selectedStopId);
-      send_str(KEY_REQUEST_NEARBY_DEPARTUREBOARD,selectedStopId);  
+      send_str(KEY_REQUEST_NEARBY_DEPARTUREBOARD,selectedStopId);
 }

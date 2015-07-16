@@ -1,20 +1,20 @@
 /*
 *  From https://github.com/janantala/GPS-distance
-* 
+*
 ###===================================================================================================
 ### get distance in metres between 2 points:
 ### Vincenty Formula http://www.movable-type.co.uk/scripts/latlong-vincenty.html
 */
 
-if (typeof(Number.prototype.toRad) === "undefined") 
+if (typeof(Number.prototype.toRad) === "undefined")
 {
-	Number.prototype.toRad = function() 
+	Number.prototype.toRad = function()
 	{
 		return this * Math.PI / 180;
 	};
 }
 
-function getDistance(lat1, lon1, lat2, lon2) 
+function getDistance(lat1, lon1, lat2, lon2)
 {
 	var a = 6378137, b = 6356752.314245,  f = 1/298.257223563;
 	var L = (lon2-lon1).toRad();
@@ -25,7 +25,7 @@ function getDistance(lat1, lon1, lat2, lon2)
   var cosSqAlpha, sinLambda, sinSigma,cosSigma,cosLambda,sinAlpha,cos2SigmaM,sigma;
 
 	var lambda = L, lambdaP, iterLimit = 100;
-	do 
+	do
 	{
 		sinLambda = Math.sin(lambda);
     cosLambda = Math.cos(lambda);
@@ -50,6 +50,6 @@ function getDistance(lat1, lon1, lat2, lon2)
 	var B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
 	var deltaSigma = B*sinSigma*(cos2SigmaM+B/4*(cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)-B/6*cos2SigmaM*(-3+4*sinSigma*sinSigma)*(-3+4*cos2SigmaM*cos2SigmaM)));
 	var s = b*A*(sigma-deltaSigma);
-  
+
 	return s;
 }

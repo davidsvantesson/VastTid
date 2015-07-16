@@ -24,7 +24,7 @@
 void send_int(uint8_t key, uint8_t cmd)
 {
   AppMessageResult resp;
-  
+
   DictionaryIterator *iter;
   app_message_outbox_begin(&iter);
 
@@ -42,10 +42,10 @@ void send_str(uint8_t key, const char* str) {
 
   DictionaryIterator *iter;
   app_message_outbox_begin(&iter);
-  
+
   Tuplet value = TupletCString(key, str);
   dict_write_tuplet(iter, &value);
-  
+
   resp = app_message_outbox_send();
   if (resp!=APP_MSG_OK) {
     APP_LOG(APP_LOG_LEVEL_DEBUG,"send_str failed: %i, %s",resp,translate_error(resp));

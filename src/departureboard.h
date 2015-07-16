@@ -8,7 +8,7 @@
 #define DEPARTUREBOARD_STATUS_WAITING 1
 #define DEPARTUREBOARD_STATUS_NO_DEPARTURES 2
 #define DEPARTUREBOARD_STATUS_NO_RESPONSE 3
-  
+
 void departueboard_init();
 void departureboard_deinit();
 void departureboard_process_message(int *key, uint32_t *value, char *string_value);

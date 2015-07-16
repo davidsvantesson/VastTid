@@ -3,11 +3,11 @@
 #include "utils.h"
 #include "departureboard.h"
 
-#define MAX_FAVORITES 10  
+#define MAX_FAVORITES 10
 #define MAX_NEARBY 10
-  
+
 Window *stopBoardWindow;
-MenuLayer *stopBoardLayer;  
+MenuLayer *stopBoardLayer;
 
 char favoriteName[MAX_FAVORITES][32];
 char favoriteDirection1[MAX_FAVORITES][32];
@@ -23,7 +23,7 @@ int8_t nrNearby;
 // HEADER MAX                     "                "
 // SUB MAX                        "                        "
 #define NEARBY_WAITING_HEAD       "Status: Fetching"
-#define NEARBY_WAITING_SUB        "Wait..."  
+#define NEARBY_WAITING_SUB        "Wait..."
 #define NEARBY_OK_HEAD            "Status: OK"
 #define NEARBY_OK_SUB             "Press to re-scan nearby"
 #define NEARBY_NO_GPS_RETRY_HEAD  "Status: No pos."
@@ -46,12 +46,12 @@ void stopBoard_init()
 {
   nrNearby = 0;
   nearbyStatus = NEARBY_STATUS_WAITING;
-  
+
   stopBoardWindow = window_create();
   window_set_window_handlers(stopBoardWindow, (WindowHandlers) {
     .load = stopBoardWindow_load,
     .unload = stopBoardWindow_unload
-  });  
+  });
 }
 
 
@@ -59,11 +59,11 @@ void stopBoard_setActive(){
   window_stack_push(stopBoardWindow, true);
 }
 
-void favorites_process_message(int *key, uint32_t *value, char *string_value) 
+void favorites_process_message(int *key, uint32_t *value, char *string_value)
 {
   static int directionNr = 0;
-  static int favorite_i = 0; 
-  
+  static int favorite_i = 0;
+
   switch(*key) {
     case KEY_FAVORITES_INIT:
       favorite_i = -1;
@@ -86,7 +86,7 @@ void favorites_process_message(int *key, uint32_t *value, char *string_value)
           break;
         case 2:
           strcpy(favoriteDirection3[favorite_i],string_value);
-          break;        
+          break;
       }
       directionNr++;
       break;
@@ -98,14 +98,14 @@ void favorites_process_message(int *key, uint32_t *value, char *string_value)
       }
       APP_LOG(APP_LOG_LEVEL_DEBUG,"Caching favorites in persistant memory, timestamp: %i",(int) *value);
       save_favorites(*value);
-      break;  
+      break;
   }
 }
 
 void nearby_process_message(int *key, uint32_t *value, char *string_value)
 {
   static int nearby_i = 0;
-  
+
   switch(*key) {
     case KEY_NEARBY_STATUS:
       nearbyStatus = *value;
@@ -116,7 +116,7 @@ void nearby_process_message(int *key, uint32_t *value, char *string_value)
           nrNearby = 0;
           if (window_is_loaded(stopBoardWindow)) {
             menu_layer_reload_data(stopBoardLayer);
-          }         
+          }
           break;
       }
       break;
@@ -144,7 +144,7 @@ void nearby_process_message(int *key, uint32_t *value, char *string_value)
       if (window_is_loaded(stopBoardWindow)) {
         menu_layer_reload_data(stopBoardLayer);
       }
-      break;    
+      break;
   }
 }
 
@@ -157,7 +157,7 @@ uint16_t stopBoard_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section
     case 0:
       return nrFavorites;
       break;
-    case 1: 
+    case 1:
       return nrNearby+1;
       break;
     default:
@@ -213,9 +213,9 @@ void stopBoard_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuInd
 
       switch (get_nr_favorite_directions(cell_index->row)) {
        case 3:
-          graphics_draw_text(ctx, favoriteDirection3[cell_index->row], fonts_get_system_font(FONT_KEY_GOTHIC_18), GRect(5, 63, 139, 18), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);          
+          graphics_draw_text(ctx, favoriteDirection3[cell_index->row], fonts_get_system_font(FONT_KEY_GOTHIC_18), GRect(5, 63, 139, 18), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
         case 2:
-          graphics_draw_text(ctx, favoriteDirection2[cell_index->row], fonts_get_system_font(FONT_KEY_GOTHIC_18), GRect(5, 44, 139, 18), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);        
+          graphics_draw_text(ctx, favoriteDirection2[cell_index->row], fonts_get_system_font(FONT_KEY_GOTHIC_18), GRect(5, 44, 139, 18), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
         case 1:
           graphics_draw_text(ctx, favoriteDirection1[cell_index->row], fonts_get_system_font(FONT_KEY_GOTHIC_18), GRect(5, 25, 139, 18), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
           graphics_draw_text(ctx, favoriteName[cell_index->row], fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), GRect(5, 0, 139, 24), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
@@ -223,19 +223,19 @@ void stopBoard_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuInd
           break;
         case 0:
         default:
-          menu_cell_basic_draw(ctx, cell_layer, favoriteName[cell_index->row], NULL, NULL);  
+          menu_cell_basic_draw(ctx, cell_layer, favoriteName[cell_index->row], NULL, NULL);
           break;
       }
       break;
     case 1:
       if (cell_index->row > 0) { //<nrNearby){
-        menu_cell_basic_draw(ctx, cell_layer, nearbyName[cell_index->row-1], nearbySubtext[cell_index->row-1], NULL);     
+        menu_cell_basic_draw(ctx, cell_layer, nearbyName[cell_index->row-1], nearbySubtext[cell_index->row-1], NULL);
       }
       else if (cell_index->row == 0) { //==nrNearby) {
         //Status
         switch (nearbyStatus) {
           case NEARBY_STATUS_OK:
-            menu_cell_basic_draw(ctx, cell_layer, NEARBY_OK_HEAD, NEARBY_OK_SUB, NULL);   
+            menu_cell_basic_draw(ctx, cell_layer, NEARBY_OK_HEAD, NEARBY_OK_SUB, NULL);
             break;
           case NEARBY_STATUS_WAITING:
             menu_cell_basic_draw(ctx, cell_layer, NEARBY_WAITING_HEAD, NEARBY_WAITING_SUB, NULL);
@@ -263,7 +263,7 @@ void stopBoard_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, voi
       break;
     case 1:
       if (cell_index->row > 0) { //<nrNearby){
-        departueboard_activate_stopId(nearbyId[cell_index->row -1],nearbyName[cell_index->row -1]);       
+        departueboard_activate_stopId(nearbyId[cell_index->row -1],nearbyName[cell_index->row -1]);
       }
       else if (cell_index->row == 0 && nearbyStatus != NEARBY_STATUS_WAITING) {
         send_int(KEY_REQUEST_NEARBY_STOPS, 1);
@@ -274,11 +274,11 @@ void stopBoard_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, voi
   }
 
 }
-  
+
 void stopBoardWindow_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
-  
+
   stopBoardLayer = menu_layer_create(bounds);
   menu_layer_set_callbacks(stopBoardLayer, NULL, (MenuLayerCallbacks){
     .get_num_sections = stopBoard_get_num_sections_callback,
@@ -289,7 +289,7 @@ void stopBoardWindow_load(Window *window) {
     .draw_row = stopBoard_draw_row_callback,
     .select_click = stopBoard_select_callback,
   });
-  
+
   // Bind the menu layer's click config provider to the window for interactivity
   menu_layer_set_click_config_onto_window(stopBoardLayer, window);
 #ifdef PBL_COLOR
@@ -297,8 +297,8 @@ void stopBoardWindow_load(Window *window) {
   menu_layer_set_highlight_colors(stopBoardLayer,GColorDukeBlue,GColorWhite);
 #endif
 
-  
-  layer_add_child(window_layer, menu_layer_get_layer(stopBoardLayer));  
+
+  layer_add_child(window_layer, menu_layer_get_layer(stopBoardLayer));
 }
 
 void stopBoardWindow_unload(Window *window) {
