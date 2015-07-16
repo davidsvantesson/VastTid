@@ -1,0 +1,61 @@
+#pragma once
+
+#ifndef UTILS_H
+#define UTILS_H
+
+#define APP_VERSION "0.2"
+
+  
+#define STORAGE_APP_VERSION                 1
+#define STORAGE_TIMESTAMP                   2
+
+#define STORAGE_NR_FAVORITES               99
+#define STORAGE_FAVORITE_NAME_BASE        100
+#define STORAGE_FAVORITE_DIRECTION1_BASE  200
+#define STORAGE_FAVORITE_DIRECTION2_BASE  300
+#define STORAGE_FAVORITE_DIRECTION3_BASE  400
+
+  
+// AppMessage keys
+enum
+{
+	KEY_DEPARTUREBOARD_ROUTENR = 0,
+  KEY_DEPARTUREBOARD_TIME = 1,
+  KEY_DEPARTUREBOARD_NAME = 2,
+  KEY_DEPARTUREBOARD_COMPLETE = 3,
+  KEY_DEPARTUREBOARD_SIZE = 4,
+  KEY_DEPARTUREBOARD_STATUS = 5,
+  KEY_DEPARTUREBOARD_DIRECTION = 6,
+  KEY_DEPARTUREBOARD_FGCOLOR = 7,
+  KEY_DEPARTUREBOARD_BGCOLOR = 8,
+  
+  KEY_FAVORITES_INIT = 10,
+  KEY_FAVORITES_NAME = 11,
+  KEY_FAVORITES_COMPLETE = 12,
+  KEY_REQUEST_FAVORITE_DEPARTUREBOARD = 13,
+  KEY_FAVORITES_DIRECTION = 14,
+  
+  KEY_PHONE_STARTUP = 100,
+  KEY_REQUEST_SETTINGS = 101, //including favorites
+     
+  KEY_NEARBY_INIT = 20,
+  KEY_NEARBY_NAME = 21,
+  KEY_NEARBY_ID = 22,
+  KEY_NEARBY_COMPLETE = 23,
+  KEY_REQUEST_NEARBY_DEPARTUREBOARD = 24,
+  KEY_NEARBY_DISTANCE = 25,
+  KEY_NEARBY_STATUS = 26,
+  KEY_REQUEST_NEARBY_STOPS = 27,
+  
+};
+  
+  char *translate_error(AppMessageResult result);
+
+void send_int(uint8_t key, uint8_t cmd);
+void send_str(uint8_t key, const char* str);
+
+bool check_stored_version();
+void set_stored_version();
+void set_stored_timestamp(uint32_t timestamp);
+
+#endif

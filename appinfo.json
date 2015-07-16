@@ -1,0 +1,47 @@
+{
+    "appKeys": {
+        "KEY_DEPARTUREBOARD_BGCOLOR": 8,
+        "KEY_DEPARTUREBOARD_COMPLETE": 3,
+        "KEY_DEPARTUREBOARD_DIRECTION": 6,
+        "KEY_DEPARTUREBOARD_FGCOLOR": 7,
+        "KEY_DEPARTUREBOARD_NAME": 2,
+        "KEY_DEPARTUREBOARD_ROUTENR": 0,
+        "KEY_DEPARTUREBOARD_SIZE": 4,
+        "KEY_DEPARTUREBOARD_STATUS": 5,
+        "KEY_DEPARTUREBOARD_TIME": 1,
+        "KEY_FAVORITES_COMPLETE": 12,
+        "KEY_FAVORITES_DIRECTION": 14,
+        "KEY_FAVORITES_INIT": 10,
+        "KEY_FAVORITES_NAME": 11,
+        "KEY_NEARBY_COMPLETE": 23,
+        "KEY_NEARBY_DISTANCE": 25,
+        "KEY_NEARBY_ID": 22,
+        "KEY_NEARBY_INIT": 20,
+        "KEY_NEARBY_NAME": 21,
+        "KEY_NEARBY_STATUS": 26,
+        "KEY_PHONE_STARTUP": 100,
+        "KEY_REQUEST_FAVORITE_DEPARTUREBOARD": 13,
+        "KEY_REQUEST_NEARBY_DEPARTUREBOARD": 24,
+        "KEY_REQUEST_NEARBY_STOPS": 27,
+        "KEY_REQUEST_SETTINGS": 101
+    },
+    "capabilities": [
+        "location"
+    ],
+    "companyName": "davidsvantesson@gmail.com",
+    "longName": "VastTid",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "VastTid",
+    "targetPlatforms": [
+        "basalt"
+    ],
+    "uuid": "1f9a96f4-822e-4e06-a240-de6e7e599784",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
