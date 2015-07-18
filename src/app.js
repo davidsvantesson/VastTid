@@ -156,7 +156,7 @@ var favoriteStops = {
   },
 
   setTimestamp: function() {
-    localStorage.setItem('timestamp',Math.Round(Date.now() / 1000));
+    localStorage.setItem('timestamp',Math.round(Date.now() / 1000));
   },
 
   getNrFavorites: function() {
@@ -172,7 +172,7 @@ var favoriteStops = {
   },
 
   seralize: function() {
-    var t;
+    var t = "";
     var n = this.getNrFavorites();
     var nd;
     var temp;
@@ -190,6 +190,7 @@ var favoriteStops = {
       }
     }
 
+    if (t.length===0) return t;
     return t.substring(0,t.length-1);
   },
 
@@ -199,11 +200,11 @@ var favoriteStops = {
     var nd = 0;
 
     for (var i=0; i<10; i++) {
-      if (config['favoritestop_'+i].length>0) {
-        localStorage.setItem('favoritestop_'+ns);
+      if (config['favoritestop_'+i]!==null && config['favoritestop_'+i]!==undefined && config['favoritestop_'+i].length>0) {
+        localStorage.setItem('favoritestop_'+ns,config['favoritestop_'+i]);
         for (var j=0; j<=2; j++) {
-          if (config['favoritedirection_'+i+'_'+j].length>0) {
-            localStorage.setItem('favoritedirection_'+ns+'_'+nd);
+          if (config['favoritedirection_'+i+'_'+j]!==null && config['favoritedirection_'+i+'_'+j]!==undefined && config['favoritedirection_'+i+'_'+j].length>0) {
+            localStorage.setItem('favoritedirection_'+ns+'_'+nd,config['favoritedirection_'+i+'_'+j]);
             nd++;
           }
         }
@@ -355,6 +356,6 @@ Pebble.addEventListener("webviewclosed",
   function(e) {
     var fullConfiguration = JSON.parse(decodeURIComponent(e.response));
     console.log("Configuration window returned: " + JSON.stringify(fullConfiguration));
-    if (fullConfiguration['save']=="1") favoriteStops.saveConfiguration(fullConfiguration);
+    if (fullConfiguration['save']==1) favoriteStops.saveConfiguration(fullConfiguration);
   }
 );
