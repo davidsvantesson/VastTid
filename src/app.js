@@ -285,7 +285,7 @@ Pebble.addEventListener("showConfiguration",
   }
 );
 
-Pebble.addEventListener("webwiewclosed"),
+Pebble.addEventListener("webviewclosed"),
   function(e) {
     var fullConfiguration = JSON.parse(decodeURIComponent(e.response));
     console.log("Configuration window returned: " + JSON.stringify(configuration));
