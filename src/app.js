@@ -149,6 +149,72 @@ var favoriteStops = {
 
   ],
 
+  getTimestamp: function() {
+    var t = localStorage.getItem('timestamp');
+    if (t===null || t===undefined) t=0;
+    return t;
+  }
+
+  setTimestamp: function() {
+    localStorage.setItem('timestamp',Math.Round(Date.now() / 1000));
+  }
+
+  getNrFavorites: function() {
+    var n = localStorage.getItem('nrFavorites');
+    if (n>0) return n;
+    else return 0;
+  }
+
+  getNrDirections: function(stop) {
+    var n = localStorage.getItem('nrDirections_'+stop);
+    if (n>0) return n;
+    else return 0;
+  }
+
+  seralize: function() {
+    var t;
+    var n = getNrFavorites();
+    var nd;
+    var temp;
+    for (var i=0; i < n ; i++) {
+      nd = getNrDirections(i);
+      temp = localStorage.getItem('favoritestop_'+i);
+      if (temp!==null && temp!==undefined && temp.length>0) {
+        t += 'favoritestop_' + i + '=' + temp + '&';
+        for (var j=0; j < nd; j++) {
+          temp = localStorage.getItem('favoritedirection_'+i+'_'+nd);
+          if (temp!==null && temp!==undefined && temp.length>0) {
+            t += 'favoritedirection_' + i + '_' + nd + '=' + temp + '&';
+          }
+        }
+      }
+    }
+
+    return t.substring(0,t.length-1);
+  }
+
+  saveConfiguration: function(config) {
+    setTimestamp();
+    var ns = 0;
+    var nd = 0;
+
+    for (var i=0; i<10; i++) {
+      if (config['favoritestop_'+i].length>0) {
+        localStorage.setItem('favoritestop_'+ns);
+        for (var j=0; j<=2; j++) {
+          if (config['favoritedirection_'+i+'_'+j].length>0) {
+            localStorage.setItem('favoritedirection_'+ns+'_'+nd);
+            nd++;
+          }
+        }
+        localStorage.setItem('nrDirections_'+ns,nd);
+        ns++;
+        nd = 0;
+      }
+    }
+    localStorage.setItem('nrFavorites',ns);
+  }
+
     sendList: function() {
       console.log("Start sending favorites");
       MessageQueue.sendAppMessage({"KEY_FAVORITES_INIT": 1});
@@ -281,13 +347,14 @@ Pebble.addEventListener("appmessage",
 
 Pebble.addEventListener("showConfiguration",
   function(e) {
-    Pebble.openURL("http://davidsvantesson.github.io/vasttid.html")
+    Pebble.openURL("http://davidsvantesson.github.io/vasttid.html?"+favoriteStops.seralize());
   }
 );
 
 Pebble.addEventListener("webviewclosed"),
   function(e) {
     var fullConfiguration = JSON.parse(decodeURIComponent(e.response));
-    console.log("Configuration window returned: " + JSON.stringify(configuration));
+    console.log("Configuration window returned: " + JSON.stringify(fullConfiguration));
+    if (fullConfiguration['save']=="1") favoriteStops.saveConfiguration(fullConfiguration);
   }
 );
