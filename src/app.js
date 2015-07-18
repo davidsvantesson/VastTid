@@ -153,31 +153,31 @@ var favoriteStops = {
     var t = localStorage.getItem('timestamp');
     if (t===null || t===undefined) t=0;
     return t;
-  }
+  },
 
   setTimestamp: function() {
     localStorage.setItem('timestamp',Math.Round(Date.now() / 1000));
-  }
+  },
 
   getNrFavorites: function() {
     var n = localStorage.getItem('nrFavorites');
     if (n>0) return n;
     else return 0;
-  }
+  },
 
   getNrDirections: function(stop) {
     var n = localStorage.getItem('nrDirections_'+stop);
     if (n>0) return n;
     else return 0;
-  }
+  },
 
   seralize: function() {
     var t;
-    var n = getNrFavorites();
+    var n = this.getNrFavorites();
     var nd;
     var temp;
     for (var i=0; i < n ; i++) {
-      nd = getNrDirections(i);
+      nd = this.getNrDirections(i);
       temp = localStorage.getItem('favoritestop_'+i);
       if (temp!==null && temp!==undefined && temp.length>0) {
         t += 'favoritestop_' + i + '=' + temp + '&';
@@ -191,10 +191,10 @@ var favoriteStops = {
     }
 
     return t.substring(0,t.length-1);
-  }
+  },
 
   saveConfiguration: function(config) {
-    setTimestamp();
+    this.setTimestamp();
     var ns = 0;
     var nd = 0;
 
@@ -213,7 +213,7 @@ var favoriteStops = {
       }
     }
     localStorage.setItem('nrFavorites',ns);
-  }
+  },
 
     sendList: function() {
       console.log("Start sending favorites");
@@ -351,7 +351,7 @@ Pebble.addEventListener("showConfiguration",
   }
 );
 
-Pebble.addEventListener("webviewclosed"),
+Pebble.addEventListener("webviewclosed",
   function(e) {
     var fullConfiguration = JSON.parse(decodeURIComponent(e.response));
     console.log("Configuration window returned: " + JSON.stringify(fullConfiguration));
