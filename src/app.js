@@ -124,6 +124,27 @@ var departures = {
   },
 };
 
+function getStopByName(inputName) {
+  var httpstring = "http://api.vasttrafik.se/bin/rest.exe/v1/location.name?" +
+            "authKey=" + authKey + "&format=json" +
+            //"&originCoordLat=57.719556&originCoordLong=12.902289" +
+            "&input=" + inputName;
+  console.log('Request named stops:' + httpstring);
+  var response = HTTPGET(httpstring);
+  //Convert to JSON
+  var json = JSON.parse(response);
+  if (!json.LocationList.StopLocation) {
+    console.log("No stop found called: " + inputName);
+    return false;
+  }
+
+  var stop;
+  if (json.LocationList.StopLocation===Array) stop = json.LocationList.StopLocation[0];
+  else stop = json.LocationList.StopLocation;
+
+  return stop;
+}
+
 var favoriteStops = {
   settings_timestamp: 6,    // Timestamp for latest setting done, seconds since 1 January 1970 00:00:00 UTC
 
@@ -182,9 +203,9 @@ var favoriteStops = {
       if (temp!==null && temp!==undefined && temp.length>0) {
         t += 'favoritestop_' + i + '=' + temp + '&';
         for (var j=0; j < nd; j++) {
-          temp = localStorage.getItem('favoritedirection_'+i+'_'+nd);
+          temp = localStorage.getItem('favoritedirection_'+i+'_'+j);
           if (temp!==null && temp!==undefined && temp.length>0) {
-            t += 'favoritedirection_' + i + '_' + nd + '=' + temp + '&';
+            t += 'favoritedirection_' + i + '_' + j + '=' + temp + '&';
           }
         }
       }
@@ -198,19 +219,28 @@ var favoriteStops = {
     this.setTimestamp();
     var ns = 0;
     var nd = 0;
+    var s;
 
     for (var i=0; i<10; i++) {
       if (config['favoritestop_'+i]!==null && config['favoritestop_'+i]!==undefined && config['favoritestop_'+i].length>0) {
-        localStorage.setItem('favoritestop_'+ns,config['favoritestop_'+i]);
-        for (var j=0; j<=2; j++) {
-          if (config['favoritedirection_'+i+'_'+j]!==null && config['favoritedirection_'+i+'_'+j]!==undefined && config['favoritedirection_'+i+'_'+j].length>0) {
-            localStorage.setItem('favoritedirection_'+ns+'_'+nd,config['favoritedirection_'+i+'_'+j]);
-            nd++;
+        s = getStopByName(config['favoritestop_'+i]);
+        if (s!==false) {
+          localStorage.setItem('favoritestop_'+i,s.name);
+          localStorage.setItem('favoritestopid_'+i,s.id);
+          for (var j=0; j<=2; j++) {
+            if (config['favoritedirection_'+i+'_'+j]!==null && config['favoritedirection_'+i+'_'+j]!==undefined && config['favoritedirection_'+i+'_'+j].length>0) {
+              s = getStopByName(config['favoritedirection_'+i+'_'+j]);
+              if (s!==false) {
+                localStorage.setItem('favoritedirection_'+i+'_'+j,s.name);
+                localStorage.setItem('favoritedirectionid_'+i+'_'+j,s.id);
+                nd++;
+              }
+            }
           }
+          localStorage.setItem('nrDirections_'+ns,nd);
+          ns++;
+          nd = 0;
         }
-        localStorage.setItem('nrDirections_'+ns,nd);
-        ns++;
-        nd = 0;
       }
     }
     localStorage.setItem('nrFavorites',ns);
@@ -218,21 +248,28 @@ var favoriteStops = {
 
     sendList: function() {
       console.log("Start sending favorites");
+      var n, nd;
       MessageQueue.sendAppMessage({"KEY_FAVORITES_INIT": 1});
-      for (var i=0; i<this.stops.length; i++) {
-        MessageQueue.sendAppMessage({"KEY_FAVORITES_NAME":this.stops[i].stopName});
-        for (var j=0; j<this.stops[i].directionName.length; j++) {
-          MessageQueue.sendAppMessage({"KEY_FAVORITES_DIRECTION":"» " + this.stops[i].directionName[j]});
+      n = this.getNrFavorites();
+      for (var i=0; i<n; i++) {
+        nd = this.getNrDirections(i);
+        MessageQueue.sendAppMessage({"KEY_FAVORITES_NAME":localStorage.getItem('favoritestop_'+i)});
+        for (var j=0; j<nd; j++) {
+          MessageQueue.sendAppMessage({"KEY_FAVORITES_DIRECTION":"» " + localStorage.getItem('favoritedirection_'+i+'_'+j)});
         }
       }
-      MessageQueue.sendAppMessage({"KEY_FAVORITES_COMPLETE": this.settings_timestamp});
+      MessageQueue.sendAppMessage({"KEY_FAVORITES_COMPLETE": this.getTimestamp()});
       console.log("Completed sending favorites");
     },
 
     getDepartures: function(i) {
       console.log("Get departureboard for favorite " + i);
-      if (i<this.stops.length) {
-        departures.getDepartures(this.stops[i].stopId, this.stops[i].directionId);
+      var dirs = [];
+      if (i<this.getNrFavorites()) {
+        for (var j=0; j<this.getNrDirections(i); j++) {
+          dirs.concat(localStorage.getItem('favoritedirectionid_'+i+'_'+j));
+        }
+        departures.getDepartures(localStorage.getItem('favoritestopid_'+i), dirs);
       }
     }
 };
@@ -313,7 +350,7 @@ function locationNotAvailable(err) {
 
 Pebble.addEventListener("ready",
   function(e) {
-    MessageQueue.sendAppMessage({"KEY_PHONE_STARTUP":favoriteStops.settings_timestamp});
+    MessageQueue.sendAppMessage({"KEY_PHONE_STARTUP":favoriteStops.getTimestamp()});
     //Watchapp opened, send stop list
     //favoriteStations.sendList();
 
