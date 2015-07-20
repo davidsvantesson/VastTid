@@ -11,6 +11,14 @@ function timeToMinutes(time) {
        return parseInt(c[0]) * 60 + parseInt(c[1]);
 }
 
+function trimStopName(stopName, max) {
+  stopName = stopName.split(',')[0];  // remove information about kommun
+
+  return stopName.substr(0,max);
+}
+
+
+
 // From https://gist.github.com/matthewtole/49da38377b0b0a423407
   function GColorFromHex(hex) {
     var hexNum = parseInt(hex, 16);

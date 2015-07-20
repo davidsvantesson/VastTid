@@ -86,7 +86,7 @@ var departures = {
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
 
-    var stop = this.departure_list[0].stop.split(',')[0];
+    var stop = trimStopName(this.departure_list[0].stop,22);
     MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_NAME": stop});
     //MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_SIZE": departures.length});
     for(i=0;i<this.departure_list.length;i++) {
@@ -208,6 +208,8 @@ var favoriteStops = {
       }
     }
     localStorage.setItem('nrFavorites',ns);
+
+    this.sendList();
   },
 
     sendList: function() {
@@ -217,9 +219,9 @@ var favoriteStops = {
       n = this.getNrFavorites();
       for (var i=0; i<n; i++) {
         nd = this.getNrDirections(i);
-        MessageQueue.sendAppMessage({"KEY_FAVORITES_NAME":localStorage.getItem('favoritestop_'+i)});
+        MessageQueue.sendAppMessage({"KEY_FAVORITES_NAME":trimStopName(localStorage.getItem('favoritestop_'+i)}),17);
         for (var j=0; j<nd; j++) {
-          MessageQueue.sendAppMessage({"KEY_FAVORITES_DIRECTION":"» " + localStorage.getItem('favoritedirection_'+i+'_'+j)});
+          MessageQueue.sendAppMessage({"KEY_FAVORITES_DIRECTION":"» " + trimStopName(localStorage.getItem('favoritedirection_'+i+'_'+j)}),19);
         }
       }
       MessageQueue.sendAppMessage({"KEY_FAVORITES_COMPLETE": this.getTimestamp()});
