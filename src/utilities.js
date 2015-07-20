@@ -1,4 +1,16 @@
 
+function HTTPGET(url) {
+    var req = new XMLHttpRequest();
+    req.open("GET", url, false);
+    req.send(null);
+    return req.responseText;
+}
+
+function timeToMinutes(time) {
+       var c = time.split(':');
+       return parseInt(c[0]) * 60 + parseInt(c[1]);
+}
+
 // From https://gist.github.com/matthewtole/49da38377b0b0a423407
   function GColorFromHex(hex) {
     var hexNum = parseInt(hex, 16);

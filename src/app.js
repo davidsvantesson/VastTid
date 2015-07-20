@@ -1,17 +1,6 @@
 
 
 
-function HTTPGET(url) {
-    var req = new XMLHttpRequest();
-    req.open("GET", url, false);
-    req.send(null);
-    return req.responseText;
-}
-
-function timeToMinutes(time) {
-       var c = time.split(':');
-       return parseInt(c[0]) * 60 + parseInt(c[1]);
-}
 
 var gpsRetry = 0;
 
