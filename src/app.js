@@ -59,7 +59,7 @@ var departures = {
 
     if (this.departure_list.length === 0) {
       // No departures
-      MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_STATUS": 2})
+      MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_STATUS": 2});
       return;
     }
 
@@ -122,14 +122,12 @@ function getStopByName(inputName) {
   var response = HTTPGET(httpstring);
   //Convert to JSON
   var json = JSON.parse(response);
-  if (!json.LocationList.StopLocation) {
+  if (json.LocationList.StopLocation===null || json.LocationList.StopLocation===undefined ) {
     console.log("No stop found called: " + inputName);
     return false;
   }
 
-  var stop;
-  if (json.LocationList.StopLocation===Array) stop = json.LocationList.StopLocation[0];
-  else stop = json.LocationList.StopLocation;
+  var stop = json.LocationList.StopLocation[0];
 
   return stop;
 }
