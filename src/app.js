@@ -219,9 +219,9 @@ var favoriteStops = {
       n = this.getNrFavorites();
       for (var i=0; i<n; i++) {
         nd = this.getNrDirections(i);
-        MessageQueue.sendAppMessage({"KEY_FAVORITES_NAME":trimStopName(localStorage.getItem('favoritestop_'+i)}),17);
+        MessageQueue.sendAppMessage({"KEY_FAVORITES_NAME":trimStopName(localStorage.getItem('favoritestop_'+i),17) });
         for (var j=0; j<nd; j++) {
-          MessageQueue.sendAppMessage({"KEY_FAVORITES_DIRECTION":"» " + trimStopName(localStorage.getItem('favoritedirection_'+i+'_'+j)}),19);
+          MessageQueue.sendAppMessage({"KEY_FAVORITES_DIRECTION":"» " + trimStopName(localStorage.getItem('favoritedirection_'+i+'_'+j),19) });
         }
       }
       MessageQueue.sendAppMessage({"KEY_FAVORITES_COMPLETE": this.getTimestamp()});
