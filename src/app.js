@@ -133,29 +133,6 @@ function getStopByName(inputName) {
 }
 
 var favoriteStops = {
-  settings_timestamp: 6,    // Timestamp for latest setting done, seconds since 1 January 1970 00:00:00 UTC
-
-  stops: [
-    {stopName: "Borås resecentrum", stopId: "9021014082017000",
-     directionId: ["9021014082500000","9022014082053001"],
-     directionName: ["Byttorpsklint", "Fjällgatan"] },
-    {stopName: "Delsjömotet", stopId: "9022014002043002",
-     directionId: ["9021014082017000"],
-     directionName: ["Borås resecentrum"]},
-    {stopName: "Fjällkroken", stopId: "9021014082689000",
-     directionId: ["9021014082017000"],
-     directionName: ["Borås resecentrum"]},
-    {stopName: "Fjällgatan", stopId: "9021014082053000",
-     directionId: ["9021014082017000"],
-     directionName: ["Borås resecentrum"]},
-    {stopName: "Södra Torget", stopId: "9022014082087020",
-     directionId: [],
-     directionName: []},
-    {stopName: "Korsvägen", stopId: "9021014003980000",
-     directionId: ["9021014082017000","9022014012153001","9021014012110000"],
-     directionName: ["Borås resecentrum", "Bergfotsgatan", "Mölndal centrum"]},
-
-  ],
 
   getTimestamp: function() {
     var t = localStorage.getItem('timestamp');
@@ -270,7 +247,6 @@ var locationOptions = {
 function getNearbyStations(pos) {
   var httpstring = "http://api.vasttrafik.se/bin/rest.exe/v1/location.nearbystops?" +
             "authKey=" + authKey + "&format=json" +
-            //"&originCoordLat=57.719556&originCoordLong=12.902289" +
             "&originCoordLat=" + pos.coords.latitude + "&originCoordLong=" + pos.coords.longitude +
             "&maxNo=40&maxDist=3000";
   console.log('Request nearby stops:' + httpstring);
