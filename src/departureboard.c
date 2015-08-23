@@ -14,6 +14,7 @@ char minutesLeft[MAX_DEPARTURE_LINES][8];
 uint8_t fgColor[MAX_DEPARTURE_LINES];
 uint8_t bgColor[MAX_DEPARTURE_LINES];
 int nrDepartures = 0;
+char  reloadStatus[14] = "Updated XX:XX";
 
 // HEADER MAX                               "                "
 // SUB MAX                                  "                        "
@@ -134,6 +135,7 @@ void departureboard_process_message(int *key, uint32_t *value, char *string_valu
 
       case KEY_DEPARTUREBOARD_COMPLETE:
         nrDepartures = departure_i+1;
+        strncpy(reloadStatus+8,*string_value,5);
         departureBoard_status = DEPARTUREBOARD_STATUS_OK;
         APP_LOG(APP_LOG_LEVEL_DEBUG,"Reload departureboard, departures: %i",nrDepartures);
         if (window_is_loaded(departureBoardWindow)) {
@@ -181,7 +183,7 @@ void departureBoard_draw_row_callback(GContext* ctx, const Layer *cell_layer, Me
   else if (cell_index->row == 0) {
     switch(departureBoard_status) {
       case DEPARTUREBOARD_STATUS_OK:
-        menu_cell_basic_draw(ctx, cell_layer, DEPARTUREBOARD_OK_HEAD, DEPARTUREBOARD_OK_SUB, NULL);
+        menu_cell_basic_draw(ctx, cell_layer, reloadStatus, DEPARTUREBOARD_OK_SUB, NULL);
         break;
       case DEPARTUREBOARD_STATUS_WAITING:
         menu_cell_basic_draw(ctx, cell_layer, DEPARTUREBOARD_WAITING_HEAD, DEPARTUREBOARD_WAITING_SUB, NULL);
