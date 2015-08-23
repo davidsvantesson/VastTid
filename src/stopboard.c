@@ -105,6 +105,22 @@ void favorites_process_message(int *key, uint32_t *value, char *string_value)
 void nearby_process_message(int *key, uint32_t *value, char *string_value)
 {
   static int nearby_i = 0;
+  static int internal_c = 0;
+
+  switch(*key) {
+    case KEY_NEARBY_NAME:
+    case KEY_NEARBY_DISTANCE:
+    case KEY_NEARBY_ID:
+      internal_c++;
+
+      if (internal_c==4) {
+        if (nearby_i<MAX_NEARBY-1) nearby_i++;
+        internal_c = 1;
+      }
+      break;
+    default:
+      break;
+  }
 
   switch(*key) {
     case KEY_NEARBY_STATUS:
@@ -122,10 +138,9 @@ void nearby_process_message(int *key, uint32_t *value, char *string_value)
       break;
     case KEY_NEARBY_INIT:
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "Nearby init");
-      nearby_i = -1;
+      nearby_i = 0;
       break;
     case KEY_NEARBY_NAME:
-      if (nearby_i<MAX_NEARBY-1) nearby_i++;
       strcpy(nearbyName[nearby_i],string_value);
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "Nearby station (%i): %s",nearby_i,nearbyStationName[nearby_i]);
       break;

@@ -75,7 +75,23 @@ void departureboard_deinit()
 void departureboard_process_message(int *key, uint32_t *value, char *string_value) {
   static int departure_i = 0;
 
-  if (window_is_loaded(departureBoardWindow)) {
+  switch(*key) {
+    case KEY_DEPARTUREBOARD_ROUTENR:
+    case KEY_DEPARTUREBOARD_TIME:
+    case KEY_DEPARTUREBOARD_DIRECTION:
+    case KEY_DEPARTUREBOARD_FGCOLOR:
+    case KEY_DEPARTUREBOARD_BGCOLOR:
+      internal_c++;
+
+      if (internal_c==6) {
+        if (departure_i<MAX_DEPARTURE_LINES-1) departure_i++;
+        internal_c = 1;
+      }
+      break;
+    default:
+      break;
+  }
+
     switch(*key) {
       case KEY_DEPARTUREBOARD_STATUS:
         departureBoard_status = *value;
@@ -93,12 +109,12 @@ void departureboard_process_message(int *key, uint32_t *value, char *string_valu
         break;
 
       case KEY_DEPARTUREBOARD_NAME:
-        departure_i = -1;
+        departure_i = 0;
+        internal_c = 0;
         strcpy(departureBoardTitle,string_value);
         break;
 
      case KEY_DEPARTUREBOARD_ROUTENR:
-        if (departure_i<MAX_DEPARTURE_LINES-1) departure_i++;
         strcpy(routeNr[departure_i],string_value);
         break;
       case KEY_DEPARTUREBOARD_TIME:
@@ -125,7 +141,6 @@ void departureboard_process_message(int *key, uint32_t *value, char *string_valu
         }
         break;
     }
-  }
 }
 
 uint16_t departureBoard_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
