@@ -100,11 +100,12 @@ var departures = {
             time = "~" + String(departure.calcTime) + " min";
         }
 
-        MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_ROUTENR": departure.sname});
-        MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_DIRECTION": departure.direction});
-        MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_TIME": time});
-        MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_FGCOLOR": GColorFromHex(departure.fgColor.substr(1))});
-        MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_BGCOLOR": GColorFromHex(departure.bgColor.substr(1))});
+        MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_ROUTENR": departure.sname,
+          "KEY_DEPARTUREBOARD_DIRECTION": departure.direction,
+          "KEY_DEPARTUREBOARD_TIME": time,
+          "KEY_DEPARTUREBOARD_FGCOLOR": GColorFromHex(departure.fgColor.substr(1)),
+          "KEY_DEPARTUREBOARD_BGCOLOR": GColorFromHex(departure.bgColor.substr(1))
+          });
 
       console.log(departure.sname + "  " + departure.direction + ": " + time );
     }
@@ -233,7 +234,7 @@ var favoriteStops = {
       var dirs = [];
       if (i<this.getNrFavorites()) {
         for (var j=0; j<this.getNrDirections(i); j++) {
-          dirs.concat(localStorage.getItem('favoritedirectionid_'+i+'_'+j));
+          dirs = dirs.concat(localStorage.getItem('favoritedirectionid_'+i+'_'+j));
         }
         departures.getDepartures(localStorage.getItem('favoritestopid_'+i), dirs);
       }
@@ -292,9 +293,10 @@ function getNearbyStations(pos) {
 
   for (i=0; i<stops.length && i<10; i++) {
     //console.log("Nearby "+i+": " + JSON.stringify(stops[i]));
-    MessageQueue.sendAppMessage({"KEY_NEARBY_NAME":stops[i].name});
-    MessageQueue.sendAppMessage({"KEY_NEARBY_DISTANCE": (Math.round(stops[i].calcDist/100)*100) + "m"});
-    MessageQueue.sendAppMessage({"KEY_NEARBY_ID":stops[i].id});
+    MessageQueue.sendAppMessage({"KEY_NEARBY_NAME":trimStopName(stops[i].name,17),
+      "KEY_NEARBY_DISTANCE": (Math.round(stops[i].calcDist/100)*100) + "m",
+      "KEY_NEARBY_ID":stops[i].id
+      });
   }
   MessageQueue.sendAppMessage({"KEY_NEARBY_COMPLETE":i+1});
 
