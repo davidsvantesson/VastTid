@@ -75,6 +75,7 @@ void departureboard_deinit()
 
 void departureboard_process_message(int *key, uint32_t *value, char *string_value) {
   static int departure_i = 0;
+  static int internal_c = 0;
 
   switch(*key) {
     case KEY_DEPARTUREBOARD_ROUTENR:
@@ -135,7 +136,7 @@ void departureboard_process_message(int *key, uint32_t *value, char *string_valu
 
       case KEY_DEPARTUREBOARD_COMPLETE:
         nrDepartures = departure_i+1;
-        strncpy(reloadStatus+8,*string_value,5);
+        strncpy(reloadStatus+8,string_value,5);
         departureBoard_status = DEPARTUREBOARD_STATUS_OK;
         APP_LOG(APP_LOG_LEVEL_DEBUG,"Reload departureboard, departures: %i",nrDepartures);
         if (window_is_loaded(departureBoardWindow)) {
