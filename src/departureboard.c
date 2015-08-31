@@ -171,12 +171,17 @@ int16_t departureBoard_get_row_height_callback(MenuLayer *menu_layer, MenuIndex 
 
 void departureBoard_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
   if (cell_index->row > 0) { // nrDepartures){
+
+#ifdef PBL_COLOR
       graphics_context_set_fill_color(ctx,(GColor) fgColor[cell_index->row -1]);
-      graphics_fill_rect(ctx,RouteNrFill,4,GCornersAll);
       graphics_context_set_text_color(ctx,(GColor) bgColor[cell_index->row -1]);
+#endif
+      graphics_fill_rect(ctx,RouteNrFill,4,GCornersAll);
       graphics_draw_text(ctx,routeNr[cell_index->row -1],fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),RouteNrText,GTextOverflowModeWordWrap,GTextAlignmentCenter,NULL);
 
+#ifdef PBL_COLOR
       graphics_context_set_text_color(ctx,GColorBlack);
+#endif
       graphics_draw_text(ctx,direction[cell_index->row -1],fonts_get_system_font(FONT_KEY_GOTHIC_18),DirectionText,GTextOverflowModeWordWrap,GTextAlignmentLeft,NULL);
       graphics_draw_text(ctx,minutesLeft[cell_index->row -1],fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),MinutesLeftText,GTextOverflowModeWordWrap,GTextAlignmentRight,NULL );
 
