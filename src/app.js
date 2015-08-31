@@ -94,7 +94,7 @@ var departures = {
 
         var time = "";
         if (departure.rtTime) {
-          if (departure.calcTime === 0 || departure.calcTime === -1) time = "nu";
+          if (departure.calcTime === 0 || departure.calcTime === -1) time = "now";
           else  time = String(departure.calcTime) + " min";
         } else {
             time = "~" + String(departure.calcTime) + " min";
