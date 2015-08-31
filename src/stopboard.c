@@ -183,7 +183,16 @@ uint16_t stopBoard_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section
 }
 
 int16_t stopBoard_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-  return 22;
+  switch (section_index) {
+    case 0:
+      if (nrFavorites==0) return 0;
+      else return 22;
+      break;
+    case 1:
+    default:
+      return 22;
+      break;
+  }
 }
 
 void stopBoard_draw_header_callback (GContext* ctx, const Layer *cell_layer,  uint16_t section_index, void *data) {
