@@ -139,6 +139,7 @@ void nearby_process_message(int *key, uint32_t *value, char *string_value)
     case KEY_NEARBY_INIT:
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "Nearby init");
       nearby_i = 0;
+      internal_c = 0;
       break;
     case KEY_NEARBY_NAME:
       strcpy(nearbyName[nearby_i],string_value);
