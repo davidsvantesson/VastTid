@@ -3,7 +3,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define APP_VERSION "0.2"
+#define APP_VERSION "1.0"
 
 
 #define STORAGE_APP_VERSION                 1
