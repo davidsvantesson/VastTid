@@ -102,7 +102,7 @@ void departureboard_process_message(int *key, uint32_t *value, char *string_valu
             APP_LOG(APP_LOG_LEVEL_DEBUG,"No departures");
           case DEPARTUREBOARD_STATUS_NO_RESPONSE:
             nrDepartures = 0;
-
+            departureBoard_status = *value;            
           if (window_is_loaded(departureBoardWindow)) {
               menu_layer_reload_data(departureBoardLayer);
           }

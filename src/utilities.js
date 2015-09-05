@@ -8,7 +8,11 @@ function HTTPGET(url) {
 
 function timeToMinutes(time) {
        var c = time.split(':');
-       return parseInt(c[0]) * 60 + parseInt(c[1]);
+       if (c.length==2) {
+         return parseInt(c[0]) * 60 + parseInt(c[1]);
+       } else {
+         return 0;
+       }
 }
 
 function trimStopName(stopName, max) {

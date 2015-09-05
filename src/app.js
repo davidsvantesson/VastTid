@@ -23,7 +23,7 @@ var departures = {
 
       var json = JSON.parse(response);
 
-      this.servertime_text = json.DepartureBoard.servertime;
+      if (json.DepartureBoard.servertime!==undefined && json.DepartureBoard.servertime!==null) this.servertime_text = json.DepartureBoard.servertime;
 
       if (json.DepartureBoard.Departure===null || json.DepartureBoard.Departure===undefined) {
         // No departures
@@ -53,11 +53,10 @@ var departures = {
       }
     }
 
-    console.log("Got departures:" + JSON.stringify(this.departure_list));
 
     this.servertime = timeToMinutes(this.servertime_text);
 
-    if (this.departure_list.length === 0) {
+    if (this.departure_list.length == 0) {
       // No departures
       MessageQueue.sendAppMessage({"KEY_DEPARTUREBOARD_STATUS": 2});
       return;
@@ -323,7 +322,6 @@ Pebble.addEventListener("ready",
 
     //Get nearby stations
     gpsRetry = 0;
-    console.log("Try to get gps position...");
     navigator.geolocation.getCurrentPosition(getNearbyStations,locationNotAvailable, locationOptions);
   }
 );
