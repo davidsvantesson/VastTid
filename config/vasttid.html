@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VästTid configuration</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, inital-scale=1">
+
+    <!-- Bootstrap -->
+    <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
+
+    <link rel='stylesheet' type='text/css' href='slate-0.0.3/dist/css/slate.css'>
+    <script src='slate-0.0.3/dist/js/slate.js'></script>
+    <script src='jquery.ba-bbq.min.js'></script>
+  </head>
+  <body>
+
+  <div class="item-container">
+    <h1 class="title">VastTid configuration</h1>
+  </div>
+
+  <div class='item-container'>
+    <div class='item-container-content'>
+    <div class='item'>
+    Enter the stop names as you would in Västtrafiks "Reseplaneraren",
+    the first returned stop will be used.
+    You can optionally add up to three directions (stop names).
+    The departure board will be filtered to only show departures
+    that will pass any of those stops (after the chosen stop).
+    </div>
+    </div>
+  </div>
+
+  <div class="item-container">
+    <div class="item-container-header">Favorite stops</div>
+    <div class="item-container-content">
+      <div id='stop_list' class="item-draggable-list item-dynamic-list">
+        <label class="item" id='empty_item'>
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" name="stop" placeholder="Stop name">
+          </div>
+          <div class="item-dynamic-list-direction">
+            <label class="item">
+              <div class="item-input-wrapper">
+                <input type="text" class="item-input" name="dest" placeholder="Direction">
+              </div>
+            </label>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class='item-container'>
+      <div class='button-container'>
+        <input id='b-submit' type='button' class='item-button' value='SAVE'>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+
+    var i;
+    var j;
+    var stop;
+    var stopdir;
+    var elm;
+    var elm2;
+    var emptyitem = document.getElementById('empty_item');
+    for (i=0;i<10;i++) {
+      stop = decodeURI(getURLVariable('favoritestop_'+i));
+      if (stop!==null && stop!==undefined && stop.length>0) {
+        var $addtext = '<label class="item">'
+                        + '<div class="item-input-wrapper">'
+                          + '<input type="text" class="item-input" name="stop" placeholder="Stop name" value="' + stop + '">'
+                        + '</div>'
+                        + '<div class="item-dynamic-list-direction">';
+
+        for (j=0;j<=2;j++) {
+          stopdir = decodeURI(getURLVariable('favoritedirection_'+i+'_'+j));
+          if (stopdir!==null && stopdir!==undefined && stopdir.length>0) {
+            $addtext += '<label class="item">'
+                          + '<div class="item-input-wrapper">'
+                            + '<input type="text" class="item-input" name="dest" placeholder="Direction" value="' + stopdir + '">'
+                          + '</div>'
+                      + '</label>'
+          }
+          else break;
+        }
+
+        $addtext + '</div>'
+                  + '<div class="item-draggable-handle">'
+                    + '<div class="item-draggable-handle-bar"></div>'
+                    + '<div class="item-draggable-handle-bar"></div>'
+                    + '<div class="item-draggable-handle-bar"></div>'
+                  + '</div>'
+                + '</label>'
+
+        var $inbox = $($addtext);
+        $inbox.insertBefore(emptyitem);
+
+        if (i==9) emptyitem.parentNode.removeChild(emptyitem);
+
+      }
+      else {
+        break;
+      }
+    }
+
+
+    function saveOptions() {
+      var options = {'save' : 1};
+      var nrstops = 0;
+      var nrdirections = 0;
+
+      //options['favoritestops'] = [];
+      //options['favoritedirections'] = [];
+
+      var $list = document.getElementById('stop_list');
+      $("#stop_list").children('label').each(function () {
+        //options['favoritestops'][nrstops] = $(this).children('.item-input-wrapper').first().children('.item-input').val();
+        //options['favoritedirections'][nrstops] = [];
+        options['favoritestop_'+nrstops] = $(this).children('.item-input-wrapper').first().children('.item-input').val();
+        $(this).children('.item-dynamic-list-direction').first().children('label').each(function () {
+          //options['favoritedirections'][nrstops][nrdirections] = $(this).children('item-input-wrapper').first().children('.item-input').val();
+          options['favoritedirection_'+nrstops+'_'+nrdirections] = $(this).children('item-input-wrapper').first().children('.item-input').val();
+          nrdirections++;
+        });
+        nrdirections = 0;
+        nrstops++;
+      });
+
+      return options;
+    }
+
+    // Get query variables
+    function getQueryParam(variable, defaultValue) {
+      // Find all URL parameters
+      var query = location.search.substring(1);
+      var vars = query.split('&');
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+
+        // If the query variable parameter is found, decode it to use and return it for use
+        if (pair[0] === variable) {
+          return decodeURIComponent(pair[1]);
+        }
+      }
+      return defaultValue || false;
+    }
+
+
+
+    var submitButton = document.getElementById('b-submit');
+    submitButton.addEventListener('click', function() {
+      var return_to = getQueryParam('return_to', 'pebblejs://close#');
+      var location = return_to + encodeURIComponent(JSON.stringify(saveOptions()));
+      window.location.href = location;
+    });
+
+    var cancelButton = document.getElementById('b-cancel');
+    cancelButton.addEventListener('click', function() {
+      var return_to = getQueryParam('return_to', 'pebblejs://close');
+      var location = return_to;
+      //window.alert(location);
+      window.location.href = location;
+    });
+
+    function getURLVariable(name) {
+      name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+      var regexS = "[\\?&]"+name+"=([^&#]*)",
+          regex = new RegExp(regexS),
+          results = regex.exec(window.location.href);
+      if (results == null) return "";
+      else return results[1];
+    }
+  </script>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!--<script src="js/bootstrap.min.js"></script>-->
+
+  </body>
+</html>
